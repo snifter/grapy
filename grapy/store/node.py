@@ -1,5 +1,4 @@
 from collections import namedtuple
-from contextlib import AbstractContextManager
 from os import path, SEEK_END
 from struct import Struct
 
@@ -17,7 +16,7 @@ NODE_STORE_FILE_NAME = 'grapy.nodes.db'
 NodeRecord = namedtuple('NodeRecord', 'in_use first_relationship first_property label_1 label_2 label_3 label_4')
 
 
-class NodeStore(AbstractContextManager):
+class NodeStore:
     def __init__(self, dir='.'):
         self.__struct = Struct(NODE_RECORD_FORMAT)
         self.__file = None
