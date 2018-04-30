@@ -1,6 +1,6 @@
 from collections import namedtuple
 from contextlib import AbstractContextManager
-from os import path, os
+from os import path, SEEK_END
 from struct import Struct
 
 # little-endian
@@ -40,7 +40,7 @@ class NodeStore(AbstractContextManager):
         self.close()
 
     def open(self):
-        self.__file = open(self.store_file, 'wb')
+        self.__file = open(self.store_file, 'ab+')
 
     def close(self):
         if not self.__file:
@@ -50,16 +50,16 @@ class NodeStore(AbstractContextManager):
 
     def write(self, record):
         with self.__lock:
-            self.__file.seek(0, os.SEEK_END)
+            self.__file.seek(0, SEEK_END)
             record_id = self.__file.tell()
 
-            self.__file.write(self.__struct.pack(record))
+            self.__file.write(self.__struct.pack(*list(record)))
 
         return record_id
 
     def read(self, record_id):
         with self.__lock:
-            self.__file.seek(record_id, os.SEEK_SET)
+            self.__file.seek(record_id)
 
             buffer = self.__file.read(self.record_size)
             record = NodeRecord._make(self.__struct.unpack(buffer))
