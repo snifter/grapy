@@ -1,15 +1,14 @@
 from collections import namedtuple
 from os import path, SEEK_END
 from struct import Struct
+from threading import Lock
 
+NODE_RECORD_FORMAT = '<?QQBBBB'
 # little-endian
 # 1 byte - in use - deleted or not (bool)
 # 8 bytes - first relationship pointer (integer)
 # 8 bytes - first property pointer (integer)
 # 4 * 1 byte - labels pointers (integer)
-from threading import Lock
-
-NODE_RECORD_FORMAT = '<?QQBBBB'
 
 NODE_STORE_FILE_NAME = 'grapy.nodes.db'
 
