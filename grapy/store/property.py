@@ -1,5 +1,7 @@
+from grapy.store.base import Record
 
-class PropertyNameRecord:
+
+class PropertyNameRecord(Record):
     def __init__(self, value):
         if isinstance(value, str):
             raw = bytes(value, 'ascii')

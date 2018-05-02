@@ -1,4 +1,4 @@
-from grapy.store.base import RecordStore
+from grapy.store.base import RecordStore, Record
 
 LABEL_RECORD_FORMAT = '<20s'
 # little-endian
@@ -12,7 +12,7 @@ class LabelRecordFactory:
         return LabelRecord(*args)
 
 
-class LabelRecord:
+class LabelRecord(Record):
     def __init__(self, value):
         if isinstance(value, str):
             raw = bytes(value, 'ascii')
