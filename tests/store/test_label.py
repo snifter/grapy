@@ -3,7 +3,18 @@ from random import randint
 from tempfile import TemporaryDirectory
 from unittest import TestCase
 
-from grapy.store.label import LABEL_STORE_FILE_NAME, LabelStore, LabelRecord
+from grapy.store.label import LABEL_STORE_FILE_NAME, LabelStore, LabelRecord, LabelRecordFactory
+
+
+class LabelRecordFactoryTestCase(TestCase):
+    def test_create_instance_from_tuple(self):
+        label = b'testlabel'
+
+        factory = LabelRecordFactory()
+        record = factory((label,))
+
+        self.assertEqual(label, record.value.strip(), 'Record has expected value')
+        self.assertEqual(label.decode(), record.name, 'Record has expected name')
 
 
 class LabelRecordTestCase(TestCase):
@@ -12,7 +23,7 @@ class LabelRecordTestCase(TestCase):
 
         record = LabelRecord(label)
 
-        self.assertEqual(label, record.name, 'Record has expected value')
+        self.assertEqual(label, record.name, 'Record has expected name')
         self.assertEqual(label.encode('ascii'), record.value.strip(), 'Record has expected value')
 
     def test_can_be_created_from_bytes(self):
@@ -21,15 +32,7 @@ class LabelRecordTestCase(TestCase):
         record = LabelRecord(label)
 
         self.assertEqual(label, record.value.strip(), 'Record has expected value')
-        self.assertEqual(label.decode(), record.name, 'Record has expected value')
-
-    def test_make_create_instance_from_tuple(self):
-        label = b'testlabel'
-
-        record = LabelRecord._make((label,))
-
-        self.assertEqual(label, record.value.strip(), 'Record has expected value')
-        self.assertEqual(label.decode(), record.name, 'Record has expected value')
+        self.assertEqual(label.decode(), record.name, 'Record has expected name')
 
     def test_value_is_padded_on_end(self):
         label = b'testlabel'
