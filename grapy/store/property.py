@@ -1,17 +1,13 @@
+from grapy.store.base.descryptor import ConstantLengthBytes
 from grapy.store.base.record import Record
 
 
 class PropertyNameRecord(Record):
+
+    value = ConstantLengthBytes(40)
+
     def __init__(self, value):
-        if isinstance(value, str):
-            raw = bytes(value, 'ascii')
-        else:
-            raw = value
-
-        if len(raw) > 40:
-            raise ValueError('Value of record can be at most 40 bytes')
-
-        self.value = raw.ljust(40)
+        self.value = value
 
     @property
     def name(self):

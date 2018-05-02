@@ -8,49 +8,35 @@ from grapy.store.label import LABEL_STORE_FILE_NAME, LabelStore, LabelRecord, La
 
 class LabelRecordFactoryTestCase(TestCase):
     def test_create_instance_from_tuple(self):
-        label = b'testlabel'
+        label = b'test_label'
 
         factory = LabelRecordFactory()
         record = factory((label,))
 
-        self.assertEqual(label, record.value.strip(), 'Record has expected value')
         self.assertEqual(label.decode(), record.name, 'Record has expected name')
 
 
 class LabelRecordTestCase(TestCase):
     def test_can_be_created_from_string(self):
-        label = 'testlabel'
+        name = 'test_label'
 
-        record = LabelRecord(label)
+        record = LabelRecord(name)
 
-        self.assertEqual(label, record.name, 'Record has expected name')
-        self.assertEqual(label.encode('ascii'), record.value.strip(), 'Record has expected value')
+        self.assertEqual(name, record.name, 'Record has expected name')
+        self.assertEqual(name.encode('ascii'), record.value.strip(), 'Record has expected value')
 
     def test_can_be_created_from_bytes(self):
-        label = b'testlabel'
+        value = b'test_label'
 
-        record = LabelRecord(label)
+        record = LabelRecord(value)
 
-        self.assertEqual(label, record.value.strip(), 'Record has expected value')
-        self.assertEqual(label.decode(), record.name, 'Record has expected name')
-
-    def test_value_is_padded_on_end(self):
-        label = b'testlabel'
-
-        record = LabelRecord(label)
-        self.assertEqual(20, len(record.value), 'Record has expected length')
-        self.assertTrue(record.value.startswith(label), 'Padding is added on end')
-
-    def test_raises_if_label_too_long(self):
-        label = b'a' * 21
-
-        with self.assertRaises(ValueError):
-            LabelRecord(label)
+        self.assertEqual(value, record.value.strip(), 'Record has expected value')
+        self.assertEqual(value.decode(), record.name, 'Record has expected name')
 
     def test_is_iterable(self):
-        label = 'testlabel'
+        name = 'test_label'
 
-        record = LabelRecord(label)
+        record = LabelRecord(name)
 
         as_list = list(record)
         self.assertEqual(1, len(as_list), 'List has one item')

@@ -1,3 +1,4 @@
+from grapy.store.base.descryptor import ConstantLengthBytes
 from grapy.store.base.record import Record
 from grapy.store.base.store import RecordStore
 
@@ -14,16 +15,11 @@ class LabelRecordFactory:
 
 
 class LabelRecord(Record):
+
+    value = ConstantLengthBytes(20)
+
     def __init__(self, value):
-        if isinstance(value, str):
-            raw = bytes(value, 'ascii')
-        else:
-            raw = value
-
-        if len(raw) > 20:
-            raise ValueError('Value of record can be at most 20 bytes')
-
-        self.value = raw.ljust(20)
+        self.value = value
 
     @property
     def name(self):

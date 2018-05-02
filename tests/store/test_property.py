@@ -5,7 +5,7 @@ from grapy.store.property import PropertyNameRecord
 
 class LabelRecordTestCase(TestCase):
     def test_can_be_created_from_string(self):
-        name = 'test_property'
+        name = 'test_name'
 
         record = PropertyNameRecord(name)
 
@@ -13,28 +13,15 @@ class LabelRecordTestCase(TestCase):
         self.assertEqual(name.encode('ascii'), record.value.strip(), 'Record has expected value')
 
     def test_can_be_created_from_bytes(self):
-        value = b'test_property'
+        value = b'test_value'
 
         record = PropertyNameRecord(value)
 
         self.assertEqual(value, record.value.strip(), 'Record has expected value')
         self.assertEqual(value.decode(), record.name, 'Record has expected name')
 
-    def test_value_is_padded_on_end(self):
-        value = b'test_property'
-
-        record = PropertyNameRecord(value)
-        self.assertEqual(40, len(record.value), 'Record has expected length')
-        self.assertTrue(record.value.startswith(value), 'Padding is added on end')
-
-    def test_raises_if_label_too_long(self):
-        value = b'a' * 41
-
-        with self.assertRaises(ValueError):
-            PropertyNameRecord(value)
-
     def test_is_iterable(self):
-        name = 'test_property'
+        name = 'test_name'
 
         record = PropertyNameRecord(name)
 
