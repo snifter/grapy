@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from grapy.store.base import RecordStore
+from grapy.store.base.store import RecordStore
 
 NODE_RECORD_FORMAT = '<?QQ4I'
 # little-endian

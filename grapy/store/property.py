@@ -1,4 +1,4 @@
-from grapy.store.base import Record
+from grapy.store.base.record import Record
 
 
 class PropertyNameRecord(Record):

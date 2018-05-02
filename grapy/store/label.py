@@ -1,4 +1,5 @@
-from grapy.store.base import RecordStore, Record
+from grapy.store.base.record import Record
+from grapy.store.base.store import RecordStore
 
 LABEL_RECORD_FORMAT = '<20s'
 # little-endian
