@@ -1,23 +1,42 @@
-from collections import namedtuple
 from os import path, SEEK_END
 from struct import Struct
 from threading import Lock
 
-NODE_RECORD_FORMAT = '<?QQ4I'
+LABEL_RECORD_FORMAT = '<20s'
 # little-endian
-# 1 byte - in use - deleted or not (bool)
-# 8 bytes - first relationship pointer (integer)
-# 8 bytes - first property pointer (integer)
-# 4 * 4 bytes - labels pointers (integer)
+# 20 bytes - name - char[]
 
-NODE_STORE_FILE_NAME = 'grapy.nodes.db'
-
-NodeRecord = namedtuple('NodeRecord', 'in_use first_relationship first_property label_1 label_2 label_3 label_4')
+LABEL_STORE_FILE_NAME = 'grapy.labels.db'
 
 
-class NodeStore:
+class LabelRecord:
+    def __init__(self, value):
+        if isinstance(value, str):
+            raw = bytes(value, 'ascii')
+        else:
+            raw = value
+
+        if len(raw) > 20:
+            raise ValueError('Value of record can be at most 20 bytes')
+
+        self.value = raw.ljust(20)
+
+    @staticmethod
+    def _make(args):
+        return LabelRecord(*args)
+
+    @property
+    def name(self):
+        name = self.value.decode('ascii')
+        return name.strip()
+
+    def __iter__(self):
+        return iter([self.value])
+
+
+class LabelStore:
     def __init__(self, dir='.'):
-        self.__struct = Struct(NODE_RECORD_FORMAT)
+        self.__struct = Struct(LABEL_RECORD_FORMAT)
         self.__file = None
         self.__dir = dir
         self.__lock = Lock()
@@ -28,7 +47,7 @@ class NodeStore:
 
     @property
     def store_file(self):
-        return path.join(self.__dir, NODE_STORE_FILE_NAME)
+        return path.join(self.__dir, LABEL_STORE_FILE_NAME)
 
     def __enter__(self):
         self.open()
@@ -60,6 +79,6 @@ class NodeStore:
             self.__file.seek(record_id)
 
             buffer = self.__file.read(self.record_size)
-            record = NodeRecord._make(self.__struct.unpack(buffer))
+            record = LabelRecord._make(self.__struct.unpack(buffer))
 
         return record
