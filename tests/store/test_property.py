@@ -3,7 +3,7 @@ from unittest import TestCase
 from grapy.store.property import PropertyNameRecord
 
 
-class LabelRecordTestCase(TestCase):
+class PropertyNameRecordTestCase(TestCase):
     def test_can_be_created_from_string(self):
         name = 'test_name'
 

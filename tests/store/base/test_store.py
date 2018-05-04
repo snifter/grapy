@@ -6,7 +6,7 @@ from unittest import TestCase
 from grapy.store.node import NODE_STORE_FILE_NAME, NodeStore, NodeRecord
 
 
-class NodeStoreTestCase(TestCase):
+class StoreTestCase(TestCase):
 
     temp_dir = None
 

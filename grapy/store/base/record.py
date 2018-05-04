@@ -9,3 +9,11 @@ class RecordValidation(type):
 
 class Record(object, metaclass=RecordValidation):
     pass
+
+
+class RecordFactory:
+    def __init__(self, record_type):
+        self.record_type = record_type
+
+    def __call__(self, args):
+        return self.record_type(*args)

@@ -1,5 +1,5 @@
 from grapy.store.base.descryptor import ConstantLengthBytes
-from grapy.store.base.record import Record
+from grapy.store.base.record import Record, RecordFactory
 from grapy.store.base.store import RecordStore
 
 LABEL_RECORD_FORMAT = '<20s'
@@ -7,11 +7,6 @@ LABEL_RECORD_FORMAT = '<20s'
 # 20 bytes - name - char[]
 
 LABEL_STORE_FILE_NAME = 'grapy.labels.db'
-
-
-class LabelRecordFactory:
-    def __call__(self, args):
-        return LabelRecord(*args)
 
 
 class LabelRecord(Record):
@@ -34,7 +29,7 @@ class LabelStore(RecordStore):
 
     record_format = LABEL_RECORD_FORMAT
     store_file_name = LABEL_STORE_FILE_NAME
-    record_factory = LabelRecordFactory()
+    record_factory = RecordFactory(LabelRecord)
 
     def __init__(self, dir='.'):
         super().__init__(dir)
