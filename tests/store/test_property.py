@@ -1,6 +1,44 @@
 from unittest import TestCase
 
-from grapy.store.property import PropertyNameRecord
+from grapy.store.property import PropertyNameRecord, PropertyRecord, PropertyType, RecordType
+
+
+class PropertyTypeTestCase(TestCase):
+    def setUp(self):
+        self.record = PropertyRecord(None)
+
+    def test_integer_type(self):
+        self.record.value = 3
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.INTEGER, target.type, 'for number type is set to INTEGER')
+
+    def test_float_type(self):
+        self.record.value = 3.3
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.FLOAT, target.type, 'for decimal number type is set to FLOAT')
+
+    def test_bool_type(self):
+        self.record.value = True
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.BOOL, target.type, 'for True type is set to BOOL')
+
+        self.record.value = False
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.BOOL, target.type, 'for False type is set to BOOL')
+
+    def test_bytes_type(self):
+        self.record.value = b'test'
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.BYTES, target.type, 'for bytes type is set to BYTES')
+
+        self.record.value = bytearray('test', 'utf-8')
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.BYTES, target.type, 'for bytes type is set to BYTES')
+
+    def test_string_type(self):
+        self.record.value = 'another test'
+        target = RecordType(self.record)
+        self.assertEqual(PropertyType.STRING, target.type, 'for string type is set to STRING')
 
 
 class PropertyNameRecordTestCase(TestCase):
