@@ -35,7 +35,7 @@ class RecordStore(object, metaclass=RecordStoreValidation):
 
     def __init__(self, dir='.'):
         self.__struct = Struct(self.record_format)
-        self.__file = None
+        self._file = None
         self.__dir = dir
         self.__lock = Lock()
 
@@ -55,28 +55,34 @@ class RecordStore(object, metaclass=RecordStoreValidation):
         self.close()
 
     def open(self):
-        self.__file = open(self.store_file, 'ab+')
+        self._file = open(self.store_file, 'ab+')
 
     def close(self):
-        if not self.__file:
+        if not self._file:
             return
 
-        self.__file.close()
+        self._file.close()
 
     def write(self, record):
         with self.__lock:
-            self.__file.seek(0, SEEK_END)
-            record_id = self.__file.tell()
+            return self._write_record(record)
 
-            self.__file.write(self.__struct.pack(*list(record)))
+    def _write_record(self, record):
+        self._file.seek(0, SEEK_END)
+        record_id = self._file.tell()
+
+        self._file.write(self.__struct.pack(*list(record)))
 
         return record_id
 
     def read(self, record_id):
         with self.__lock:
-            self.__file.seek(record_id)
+            return self._read_record(record_id)
 
-            buffer = self.__file.read(self.record_size)
-            record = self.record_factory(self.__struct.unpack(buffer))
+    def _read_record(self, record_id):
+        self._file.seek(record_id)
+
+        buffer = self._file.read(self.record_size)
+        record = self.record_factory(self.__struct.unpack(buffer))
 
         return record
