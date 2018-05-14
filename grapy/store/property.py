@@ -69,10 +69,29 @@ class RecordType:
 
 class ValueStructFormatFactory:
     def for_store(self, serialized_value):
-        pass
+        if isinstance(serialized_value, bool):
+            return '<?'
+        elif isinstance(serialized_value, int):
+            return '<q'
+        elif isinstance(serialized_value, float):
+            return '<d'
+        elif isinstance(serialized_value, (bytearray, bytes)):
+            return '<{0}s'.format(len(serialized_value))
+        else:
+            raise ValueError('Type {0} is not supported as property value type'.format(type(serialized_value)))
 
     def for_restore(self, header):
-        pass
+        property_type = header.type
+        length = header.length
+
+        if property_type == PropertyType.BOOL:
+            return '<?'
+        elif property_type == PropertyType.INTEGER:
+            return '<q'
+        elif property_type == PropertyType.FLOAT:
+            return '<d'
+        elif property_type in [PropertyType.BYTES, PropertyType.STRING]:
+            return '<{0}s'.format(length)
 
 
 class ValueSerializer:
@@ -80,7 +99,12 @@ class ValueSerializer:
         self.__record = record
 
     def serialize(self):
-        pass
+        value = self.__record.value
+
+        if isinstance(value, str):
+            return value.encode('utf-8')
+
+        return self.__record.value
 
 
 class ValueDeserializer:
@@ -88,7 +112,10 @@ class ValueDeserializer:
         self.__header = header
 
     def deserialize(self, stored_value):
-        pass
+        if self.__header.type == PropertyType.STRING:
+            return stored_value.decode('utf-8')
+
+        return stored_value
 
 
 class PropertyStore(RecordStore):
