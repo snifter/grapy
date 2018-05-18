@@ -1,4 +1,3 @@
-from collections import namedtuple
 from enum import IntEnum
 from struct import Struct
 
@@ -23,7 +22,20 @@ PROPERTY_NAME_STORE_FILE_NAME = 'grapy.propertynames.db'
 PROPERTY_STORE_FILE_NAME = 'grapy.properties.db'
 
 
-PropertyHeader = namedtuple('PropertyHeader', 'name_pointer next_property type length')
+class PropertyHeader(Record):
+    def __init__(self, name_pointer, next_property, type, length):
+        self.name_pointer = name_pointer
+        self.next_property = next_property
+        self.type = type if isinstance(type, PropertyType) else PropertyType(type)
+        self.length = length
+
+    def __iter__(self):
+        return iter([
+            self.name_pointer,
+            self.next_property,
+            self.type,
+            self.length
+        ])
 
 
 class PropertyRecord(Record):
@@ -39,6 +51,7 @@ class PropertyRecord(Record):
 
 
 class PropertyType(IntEnum):
+    UNKNOWN = 0
     INTEGER = 1
     FLOAT = 2
     BOOL = 3
@@ -122,7 +135,7 @@ class PropertyStore(RecordStore):
 
     record_format = PROPERTY_HEADER_RECORD_FORMAT
     store_file_name = PROPERTY_STORE_FILE_NAME
-    record_factory = PropertyHeader._make
+    record_factory = RecordFactory(PropertyHeader)
 
     def __init__(self, dir='.'):
         super().__init__(dir)
@@ -136,7 +149,8 @@ class PropertyStore(RecordStore):
         struct = self.__get_struct(struct_format)
 
         buffer = self._file.read(header.length)
-        stored_value = struct.unpack(buffer)
+        stored_value_tuple = struct.unpack(buffer)
+        stored_value = stored_value_tuple[0]
 
         value = ValueDeserializer(header).deserialize(stored_value)
 

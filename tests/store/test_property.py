@@ -1,7 +1,10 @@
+from os import path, remove
+from random import randint, random
+from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 from grapy.store.property import PropertyNameRecord, PropertyRecord, PropertyType, RecordType, ValueSerializer, \
-    PropertyHeader, ValueDeserializer, ValueStructFormatFactory
+    PropertyHeader, ValueDeserializer, ValueStructFormatFactory, PROPERTY_STORE_FILE_NAME, PropertyStore
 
 
 class PropertyTypeTestCase(TestCase):
@@ -133,6 +136,107 @@ class ValueStructFormatFactoryTestCase(TestCase):
             header = PropertyHeader(0, 0, property_type, length)
             actual = target.for_restore(header)
             self.assertEqual(expected, actual, 'Should be valid format')
+
+
+def integer_value_factory():
+    return randint(0, 1000)
+
+
+def float_value_factory():
+    return random()
+
+
+def bool_value_factory():
+    return randint(0, 1) == 1
+
+
+def bytes_value_factory():
+    size = randint(10, 255)
+    return bytes([randint(0, 255) for _ in range(size)])
+
+
+def string_value_factory():
+    return str(random())
+
+
+class PropertyStoreTestCase(TestCase):
+    temp_dir = None
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp_dir = TemporaryDirectory()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp_dir.cleanup()
+
+    def tearDown(self):
+        file_name = path.join(self.temp_dir.name, PROPERTY_STORE_FILE_NAME)
+        if path.exists(file_name):
+            remove(file_name)
+
+    def test_store_file_is_created(self):
+        header = PropertyHeader(0, 0, 0, 0)
+        record = PropertyRecord(header)
+        record.value = 1
+
+        with PropertyStore(dir=self.temp_dir.name) as store:
+            store.write(record)
+
+        file_name = path.join(self.temp_dir.name, PROPERTY_STORE_FILE_NAME)
+
+        self.assertTrue(path.exists(file_name), 'File has been created')
+
+    def test_integer_write_read(self):
+        self.__test_write_read(integer_value_factory)
+
+    def test_float_write_read(self):
+        self.__test_write_read(float_value_factory)
+
+    def test_bool_write_read(self):
+        self.__test_write_read(bool_value_factory)
+
+    def test_bytes_write_read(self):
+        self.__test_write_read(bytes_value_factory)
+
+    def test_string_write_read(self):
+        self.__test_write_read(string_value_factory)
+
+    def test_monkey_mode_write_read(self):
+        factories = [
+            integer_value_factory,
+            float_value_factory,
+            bool_value_factory,
+            bytes_value_factory,
+            string_value_factory
+        ]
+
+        def value_factory():
+            factory = factories[randint(0, len(factories) - 1)]
+            return factory()
+
+        self.__test_write_read(value_factory, 1000)
+
+    def __test_write_read(self, value_factory, iterations=10):
+        records = []
+
+        # write
+        with PropertyStore(dir=self.temp_dir.name) as store:
+            for i in range(iterations):
+                header = PropertyHeader(0, 0, 0, 0)
+                record = PropertyRecord(header)
+                record.value = value_factory()
+
+                record_id = store.write(record)
+
+                records.append((record_id, list(record)))
+
+        # read
+        with PropertyStore(dir=self.temp_dir.name) as store:
+            for record_id, record_values in records:
+                record = store.read(record_id)
+
+                self.assertListEqual(record_values, list(record), 'Record is properly read from file')
 
 
 class PropertyNameRecordTestCase(TestCase):
