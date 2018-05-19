@@ -6,9 +6,9 @@ from grapy.store.base.record import Record, RecordFactory
 from grapy.store.base.store import RecordStore
 
 
-PROPERTY_NAME_RECORD_FORMAT = '<40s'
+PROPERTY_NAME_RECORD_FORMAT = '<80s'
 # little-endian
-# 40 bytes - name - char[]
+# 80 bytes - name - char[]
 
 PROPERTY_HEADER_RECORD_FORMAT = '<QQHQ'
 # little-endian

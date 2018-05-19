@@ -2,9 +2,9 @@ from grapy.store.base.descryptor import ConstantLengthBytes
 from grapy.store.base.record import Record, RecordFactory
 from grapy.store.base.store import RecordStore
 
-LABEL_RECORD_FORMAT = '<20s'
+LABEL_RECORD_FORMAT = '<40s'
 # little-endian
-# 20 bytes - name - char[]
+# 40 bytes - name - char[]
 
 LABEL_STORE_FILE_NAME = 'grapy.labels.db'
 
