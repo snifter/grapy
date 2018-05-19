@@ -14,7 +14,7 @@ class ConstantLengthBytes:
 
     def __set__(self, instance, value):
         if isinstance(value, str):
-            raw = bytes(value, 'ascii')
+            raw = bytes(value, 'utf-8')
         else:
             raw = value
 

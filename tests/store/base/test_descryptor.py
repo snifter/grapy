@@ -14,11 +14,11 @@ class ConstantLengthBytesTestCase(TestCase):
         self.sample = Sample()
 
     def test_can_be_created_from_string(self):
-        name = 'test_name'
+        name = 'test_name_ąśżź'
 
         self.sample.value = name
 
-        self.assertEqual(name.encode('ascii'), self.sample.value.strip(), 'Record has expected value')
+        self.assertEqual(name.encode('utf-8'), self.sample.value.strip(), 'Record has expected value')
 
     def test_can_be_created_from_bytes(self):
         value = b'test_value'

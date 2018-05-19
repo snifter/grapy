@@ -241,12 +241,12 @@ class PropertyStoreTestCase(TestCase):
 
 class PropertyNameRecordTestCase(TestCase):
     def test_can_be_created_from_string(self):
-        name = 'test_name'
+        name = 'test_name_ążźćś'
 
         record = PropertyNameRecord(name)
 
         self.assertEqual(name, record.name, 'Record has expected name')
-        self.assertEqual(name.encode('ascii'), record.value.strip(), 'Record has expected value')
+        self.assertEqual(name.encode('utf-8'), record.value.strip(), 'Record has expected value')
 
     def test_can_be_created_from_bytes(self):
         value = b'test_value'

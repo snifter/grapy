@@ -11,14 +11,14 @@ LABEL_STORE_FILE_NAME = 'grapy.labels.db'
 
 class LabelRecord(Record):
 
-    value = ConstantLengthBytes(20)
+    value = ConstantLengthBytes(40)
 
     def __init__(self, value):
         self.value = value
 
     @property
     def name(self):
-        name = self.value.decode('ascii')
+        name = self.value.decode('utf-8')
         return name.strip()
 
     def __iter__(self):
