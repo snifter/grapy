@@ -5,13 +5,13 @@ from grapy.store.base.store import RecordStore
 NODE_RECORD_FORMAT = '<?QQ4I'
 # little-endian
 # 1 byte - in use - deleted or not (bool)
-# 8 bytes - first relationship pointer (integer)
+# 8 bytes - first edge pointer (integer)
 # 8 bytes - first property pointer (integer)
 # 4 * 4 bytes - labels pointers (integer)
 
 NODE_STORE_FILE_NAME = 'grapy.nodes.db'
 
-NodeRecord = namedtuple('NodeRecord', 'in_use first_relationship first_property label_1 label_2 label_3 label_4')
+NodeRecord = namedtuple('NodeRecord', 'in_use first_edge first_property label_1 label_2 label_3 label_4')
 
 
 class NodeStore(RecordStore):
